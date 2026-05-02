@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<ruleset name="Erfindergeist Backup">
+    <description>PHP_CodeSniffer rules: WordPress Coding Standards + PHP compatibility.</description>
+
+    <file>.</file>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/backups/*</exclude-pattern>
+    <exclude-pattern>*/.github/*</exclude-pattern>
+
+    <arg name="basepath" value="."/>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="4"/>
+    <arg value="sp"/>
+
+    <!-- Minimum WP version this plugin targets -->
+    <config name="minimum_supported_wp_version" value="6.4"/>
+
+    <!-- PHP 8.3 minimum, no upper bound (server may run higher) -->
+    <config name="testVersion" value="8.3-"/>
+
+    <rule ref="WordPress"/>
+    <rule ref="WordPress-Extra"/>
+    <rule ref="PHPCompatibilityWP"/>
+
+    <!-- PHP 8.3+ only: short array syntax [] is fine -->
+    <rule ref="Universal.Arrays.DisallowShortArraySyntax">
+        <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
+    </rule>
+
+    <!-- Full type declarations make PHPDoc blocks redundant -->
+    <rule ref="Squiz.Commenting.FunctionComment">
+        <exclude name="Squiz.Commenting.FunctionComment.Missing"/>
+        <exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
+        <exclude name="Squiz.Commenting.FunctionComment.MissingReturn"/>
+    </rule>
+    <rule ref="Squiz.Commenting.FileComment">
+        <exclude name="Squiz.Commenting.FileComment.Missing"/>
+    </rule>
+    <!-- Allow PHPMD @SuppressWarnings docblocks without a short description -->
+    <rule ref="Generic.Commenting.DocComment">
+        <exclude name="Generic.Commenting.DocComment.MissingShort"/>
+    </rule>
+</ruleset>

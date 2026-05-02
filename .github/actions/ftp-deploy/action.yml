@@ -1,0 +1,42 @@
+name: 'FTP Deploy Plugin'
+description: 'Deploy plugin files via FTPS, excluding dev and CI artefacts.'
+
+inputs:
+  username:
+    description: 'FTP username'
+    required: true
+  password:
+    description: 'FTP password'
+    required: true
+  state-name:
+    description: 'FTP deploy state file name'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: erfindergeist.org
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
+        local-dir: ./
+        protocol: ftps
+        state-name: ${{ inputs.state-name }}
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/.github*
+          **/test*
+          **/test*/**
+          **/docs*
+          **/docs*/**
+          **/backups/**
+          **/phpcs.xml
+          **/phpstan.neon
+          **/phpstan-bootstrap.php
+          **/psalm.xml
+          **/.phpmd.xml
+          **/composer.json
+          **/Dockerfile
+          **/compose.yml

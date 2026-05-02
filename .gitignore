@@ -1,0 +1,4 @@
+/vendor/
+/backups/
+*.sql
+*.sql.gz

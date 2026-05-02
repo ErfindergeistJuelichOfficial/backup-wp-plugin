@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="3"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="." />
+        <ignoreFiles>
+            <directory name="vendor" />
+            <directory name="backups" />
+            <directory name=".github" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <plugins>
+        <!-- Provides WordPress-aware taint sources/sinks (e.g. $_GET, esc_html) -->
+        <pluginClass class="PsalmWordPress\Plugin" />
+    </plugins>
+</psalm>

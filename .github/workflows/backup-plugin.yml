@@ -1,0 +1,76 @@
+name: Backup Plugin — CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    # Every Monday at 06:00 UTC — catches newly published CVEs in dependencies
+    - cron: '0 6 * * 1'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: .
+
+jobs:
+  analyse:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.4']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer, cs2pr
+          coverage: none
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ matrix.php }}-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php }}-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      # ── Dependency Security ────────────────────────────────────────────────
+      - name: Audit dependencies for known CVEs
+        run: composer audit
+
+      # ── Code Style & PHP Compatibility ────────────────────────────────────
+      - name: PHP_CodeSniffer (WPCS + PHPCompatibility)
+        run: |
+          set -o pipefail
+          vendor/bin/phpcs --report=checkstyle | cs2pr
+
+      # ── Static Analysis ───────────────────────────────────────────────────
+      - name: PHPStan (level 6)
+        run: vendor/bin/phpstan analyse --no-progress
+
+      # ── Security — Taint Analysis ─────────────────────────────────────────
+      - name: Psalm (taint analysis — XSS / SQLi / Path Traversal)
+        run: vendor/bin/psalm --taint-analysis --no-progress
+
+      # ── Code Quality ──────────────────────────────────────────────────────
+      - name: PHPMD (complexity, naming, unused code)
+        run: vendor/bin/phpmd . github .phpmd.xml --exclude vendor/,backups/,.github/

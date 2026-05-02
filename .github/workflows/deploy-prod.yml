@@ -1,0 +1,32 @@
+name: 🚀 Deploy PROD backup-wp-plugin
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy at https://erfindergeist.org/
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+
+    - name: 🐘 Setup PHP & Composer
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        tools: composer
+        coverage: none
+
+    - name: 📦 Install runtime dependencies
+      run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+    - name: 📂 Sync files
+      uses: ./.github/actions/ftp-deploy
+      with:
+        username: ${{ secrets.FTP_USERNAME_PROD }}
+        password: ${{ secrets.FTP_PASSWORD_PROD }}
+        state-name: .ftp-deploy-prod-backup-wp-plugin-state.json

@@ -1,0 +1,6 @@
+services:
+  composer:
+    build: .
+    working_dir: /app
+    volumes:
+      - .:/app
