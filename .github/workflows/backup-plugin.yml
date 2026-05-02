@@ -61,7 +61,7 @@ jobs:
       - name: PHP_CodeSniffer (WPCS + PHPCompatibility)
         run: |
           set -o pipefail
-          vendor/bin/phpcs --report=checkstyle | cs2pr
+          vendor/bin/phpcs -q --report=checkstyle | cs2pr
 
       # ── Static Analysis ───────────────────────────────────────────────────
       - name: PHPStan (level 6)
