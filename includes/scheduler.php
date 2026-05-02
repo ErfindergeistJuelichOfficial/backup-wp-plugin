@@ -16,7 +16,12 @@ function egj_backup_notify_error( string $message ): void {
 	// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- only way to report errors from background cron jobs
 	error_log( 'EGJ Backup: ' . $message );
 
-	$emails = get_users( [ 'role' => 'administrator', 'fields' => 'user_email' ] );
+	$emails = get_users(
+		[
+			'role'   => 'administrator',
+			'fields' => 'user_email',
+		]
+	);
 	if ( empty( $emails ) ) {
 		return;
 	}
