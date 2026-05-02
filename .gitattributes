@@ -1,0 +1,10 @@
+# Enforce LF line endings in the working tree on all platforms
+* text=auto eol=lf
+
+# Explicitly binary — never touch line endings
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
