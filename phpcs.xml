@@ -10,7 +10,7 @@
     <arg name="basepath" value="."/>
     <arg name="extensions" value="php"/>
     <arg name="parallel" value="4"/>
-    <arg value="sp"/>
+    <arg value="s"/>
 
     <!-- Minimum WP version this plugin targets -->
     <config name="minimum_supported_wp_version" value="6.4"/>

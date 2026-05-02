@@ -1,9 +1,10 @@
 name: 🚀 Deploy PROD backup-wp-plugin
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Backup Plugin — CI"]
+    branches: ["main"]
+    types: [completed]
 
 jobs:
   web-deploy:

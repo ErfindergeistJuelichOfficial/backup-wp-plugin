@@ -1,18 +1,22 @@
 name: 🚀 Deploy TEST Stage backup-wp-plugin
 
 on:
-  push:
-    branches:  
-      - "feature/**"
+  workflow_run:
+    workflows: ["Backup Plugin — CI"]
+    branches: ["feature/**"]
+    types: [completed]
 
 jobs:
   web-deploy:
     name: 🎉 Deploy at https://spielwiese.erfindergeist.org/
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
 
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v6
+      with:
+        ref: ${{ github.event.workflow_run.head_sha }}
 
     - name: 🐘 Setup PHP & Composer
       uses: shivammathur/setup-php@v2
