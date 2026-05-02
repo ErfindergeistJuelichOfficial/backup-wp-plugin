@@ -3,6 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
 function egj_backup_get_strategy(): string {
 	if ( ! function_exists( 'exec' ) ) {
 		return 'wpdb';
@@ -34,6 +35,7 @@ function egj_backup_parse_db_host( string $host ): array {
 	];
 }
 
+/** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
 function egj_backup_try_mysqldump(): string|false {
 	if ( ! function_exists( 'exec' ) ) {
 		return false;
