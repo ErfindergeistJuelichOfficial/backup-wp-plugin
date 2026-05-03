@@ -15,7 +15,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+    - uses: SamKirkland/FTP-Deploy-Action@v4.4.0
       with:
         server: erfindergeist.org
         username: ${{ inputs.username }}

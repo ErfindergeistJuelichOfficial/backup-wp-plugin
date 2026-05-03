@@ -1,6 +1,7 @@
 name: 🚀 Deploy TEST Stage backup-wp-plugin
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["Backup Plugin — CI"]
     branches: ["feature/**"]
