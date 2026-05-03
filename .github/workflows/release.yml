@@ -88,4 +88,3 @@ jobs:
       with:
         username: ${{ secrets.FTP_USERNAME_PROD }}
         password: ${{ secrets.FTP_PASSWORD_PROD }}
-        state-name: .ftp-deploy-prod-backup-wp-plugin-state.json

@@ -8,9 +8,6 @@ inputs:
   password:
     description: 'FTP password'
     required: true
-  state-name:
-    description: 'FTP deploy state file name'
-    required: true
 
 runs:
   using: composite
@@ -22,7 +19,7 @@ runs:
         password: ${{ inputs.password }}
         local-dir: ./
         protocol: ftps
-        state-name: ${{ inputs.state-name }}
+        state-name: .ftp-deploy-backup-wp-plugin-state.json
         exclude: |
           **/.git*
           **/.git*/**
