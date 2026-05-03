@@ -34,4 +34,3 @@ jobs:
       with:
         username: ${{ secrets.FTP_USERNAME_TEST }}
         password: ${{ secrets.FTP_PASSWORD_TEST }}
-        state-name: .ftp-deploy-test-stage-backup-wp-plugin-state.json

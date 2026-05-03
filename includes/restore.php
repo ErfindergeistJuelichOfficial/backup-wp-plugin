@@ -91,6 +91,10 @@ function egj_backup_restore_from_upload( array $file ): true|\WP_Error {
 		return $sql;
 	}
 
+	$current_siteurl = get_option( 'siteurl' );
+	$current_home    = get_option( 'home' );
+	$current_plugins = get_option( 'active_plugins' );
+
 	$bq        = new BufferedQuery();
 	$bq->query = $sql;
 	unset( $sql );
@@ -104,6 +108,10 @@ function egj_backup_restore_from_upload( array $file ): true|\WP_Error {
 	}
 
 	$errors = egj_backup_execute_sql_statements( $statements );
+
+	update_option( 'siteurl', $current_siteurl );
+	update_option( 'home', $current_home );
+	update_option( 'active_plugins', $current_plugins );
 
 	wp_cache_flush();
 	flush_rewrite_rules();
