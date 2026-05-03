@@ -1,68 +1,54 @@
-# Erfindergeist Backup — Lokale Analyse
+# Erfindergeist Backup — Local Analysis
 
-Alle Prüfungen lokal ausführen, bevor ein Commit gemacht wird.
+Run all checks locally before making a commit.
 
-## Voraussetzungen
+## Prerequisites
 
-**Option A — lokal:** PHP 8.3+, [Composer](https://getcomposer.org/) 2.4+
+Podman or Docker (no local PHP required).
 
-**Option B — ohne lokales PHP:** Docker oder Podman (siehe unten)
+## Setup
 
-## Einrichtung
-
-### Mit lokalem PHP
-
-```bash
-composer install
-```
-
-### Ohne lokales PHP (Docker / Podman)
-
-Die mitgelieferte `compose.yml` + `Dockerfile` bauen einen Container mit PHP 8.3 + Composer.  
-Einmalig das Image bauen, danach wird es gecacht:
+The included `compose.yml` + `Dockerfile` build a container with PHP 8.3 + Composer.
+Build the image once, it will be cached afterwards:
 
 ```bash
 podman compose build
 ```
 
-Dann wie gewohnt:
+Then install dependencies:
 
 ```bash
-# Development (inkl. Analyse-Tools):
+# Development (incl. analysis tools):
 podman compose run --rm composer install
 
-# Production (nur Runtime-Dependencies):
+# Production (runtime dependencies only):
 podman compose run --rm composer install --no-dev --optimize-autoloader
 ```
 
-## Einzelne Prüfungen
+## Individual Checks
 
-| Befehl | Podman-Äquivalent | Prüft |
+| Command | Podman equivalent | Checks |
 | --- | --- | --- |
-| `composer phpcs` | `podman compose run --rm composer phpcs` | Code-Style (WordPress Coding Standards + PHP-Kompatibilität) |
-| `composer phpstan` | `podman compose run --rm composer phpstan` | Statische Analyse — Typen, undefinierte Variablen, Logik-Fehler |
-| `composer psalm` | `podman compose run --rm composer psalm` | Sicherheit — Taint-Analyse (XSS, SQL-Injection, Path Traversal) |
-| `composer phpmd` | `podman compose run --rm composer phpmd` | Code-Qualität — Komplexität, Naming, ungenutzter Code |
-| `composer audit` | `podman compose run --rm composer audit` | Bekannte CVEs in Abhängigkeiten |
+| `composer phpcs` | `podman compose run --rm composer phpcs` | Code style (WordPress Coding Standards + PHP compatibility) |
+| `composer phpstan` | `podman compose run --rm composer phpstan` | Static analysis — types, undefined variables, logic errors |
+| `composer psalm` | `podman compose run --rm composer psalm` | Security — taint analysis (XSS, SQL injection, path traversal) |
+| `composer phpmd` | `podman compose run --rm composer phpmd` | Code quality — complexity, naming, unused code |
+| `composer audit` | `podman compose run --rm composer audit` | Known CVEs in dependencies |
 
-## Alle Prüfungen auf einmal
+## All Checks at Once
 
 ```bash
-# Lokal:
-composer analyse
-
-# Podman:
 podman compose run --rm composer analyse
 ```
 
-Führt phpcs → phpstan → psalm → phpmd sequentiell aus.  
-`composer audit` danach separat ausführen.
+Runs phpcs → phpstan → psalm → phpmd sequentially.
+Run `composer audit` separately afterwards.
 
 ## CI/CD
 
-Die GitHub Actions Pipeline (`.github/workflows/backup-plugin.yml`) startet automatisch bei:
+The GitHub Actions pipeline (`.github/workflows/backup-plugin.yml`) triggers automatically on:
 
-- jedem **Push** oder **Pull Request** mit Änderungen am Plugin
-- jeden **Montag um 06:00 UTC** (zum Aufdecken neu veröffentlichter CVEs)
+- every **push** or **pull request** with changes to the plugin
+- every **Monday at 06:00 UTC** (to catch newly published CVEs)
 
-Die Pipeline testet auf **PHP 8.3 und 8.4** parallel.
+The pipeline tests on **PHP 8.3 and 8.4** in parallel.

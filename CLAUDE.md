@@ -1,59 +1,61 @@
-# Projekt
+# Project
 
-WordPress-Plugin für Datenbank-Backups und -Restore (mysqldump + wpdb-Fallback).
-PHP 8.3+, WordPress 6.4+, MIT-Lizenz.
-Sprache: UI, Fehlermeldungen und Kommentare auf **Deutsch**.
+WordPress plugin for database backups and restore (mysqldump + wpdb fallback).
+PHP 8.3+, WordPress 6.4+, MIT license.
+Language: UI, error messages and comments in **German**.
 
-# Architektur
+# Architecture
 
-Funktionaler Ansatz — keine Klassen. Alle Funktionen mit Präfix `egj_backup_*`.
+Functional approach — no classes. All functions prefixed with `egj_backup_*`.
 
-| Datei | Aufgabe |
+| File | Responsibility |
 |---|---|
-| `vars.php` | Plugin-Konstanten (Version, Backup-Verzeichnis) |
-| `includes/activator.php` | Plugin-Aktivierung (Verzeichnis, .htaccess) |
-| `includes/deactivator.php` | Plugin-Deaktivierung |
-| `includes/backup.php` | Backup erstellen (mysqldump + wpdb-Fallback, gzip) |
-| `includes/restore.php` | Upload-Validierung, SQL-Ausführung, URL-Fixup |
-| `includes/scheduler.php` | WordPress-Cron (monatliche Backups, Fehlermail) |
-| `admin/main.php` | Admin-Menü, Tab-Navigation, Download/Delete-Handler |
-| `admin/partials/` | Template-Partials pro Tab |
+| `vars.php` | Plugin constants (version, backup directory) |
+| `includes/activator.php` | Plugin activation (directory, .htaccess) |
+| `includes/deactivator.php` | Plugin deactivation |
+| `includes/backup.php` | Create backup (mysqldump + wpdb fallback, gzip) |
+| `includes/restore.php` | Upload validation, SQL execution, URL fixup |
+| `includes/scheduler.php` | WordPress cron (monthly backups, error mail) |
+| `admin/main.php` | Admin menu, tab navigation, download/delete handlers |
+| `admin/partials/` | Template partials per tab |
 
-# Code-Konventionen
+# Code Conventions
 
-- PHP 8.3+ Features: vollständige Typ-Deklarationen, Union-Types, kurze Array-Syntax `[]`
-- WPCS-konform: `esc_html()`, `wp_nonce_field()`, `sanitize_key()`, `wp_kses_post()` etc.
-- Fehlerrückgaben immer mit `WP_Error`, keine Exceptions für WordPress-Flows
-- Gleichheitszeichen bei Mehrfachzuweisungen ausrichten (PHPCS-Pflicht)
-- KISS — kein Over-Engineering, kein OOP ohne Grund
+- PHP 8.3+ features: full type declarations, union types, short array syntax `[]`
+- WPCS-compliant: `esc_html()`, `wp_nonce_field()`, `sanitize_key()`, `wp_kses_post()` etc.
+- Return errors with `WP_Error`, never exceptions for WordPress flows
+- Align equals signs in multi-variable assignments (PHPCS requirement)
+- KISS — no over-engineering, no OOP without reason
 
-# Quality-Tools
+# Quality Tools
 
 ```bash
-# via Podman (Standard — kein lokales PHP nötig)
+# via Podman (default — no local PHP required)
 podman compose run --rm composer phpcs
 podman compose run --rm composer phpstan
 podman compose run --rm composer psalm
 podman compose run --rm composer phpmd
-podman compose run --rm composer analyse   # alle vier
+podman compose run --rm composer analyse   # all four
 
-# alternativ Docker
+# alternatively Docker
 docker compose run --rm composer analyse
 ```
 
-Konfigurationen: `phpcs.xml`, `phpstan.neon`, `psalm.xml`, `.phpmd.xml`
+Configurations: `phpcs.xml`, `phpstan.neon`, `psalm.xml`, `.phpmd.xml`
 
-Vor jedem Commit muss `composer analyse` fehlerfrei durchlaufen.
+Before every commit `composer analyse` must pass without errors.
+
+**Important:** Any changes to quality tools or their configuration must also be reflected in:
+- `.github/workflows/backup-plugin.yml` — the pipeline runs the same tools
+- `README.md` — documents the available commands and what they check
 
 # CI/CD & Deployment
 
 Pipelines: `.github/workflows/`
 
-| Workflow | Trigger | Ziel |
+| Workflow | Trigger | Target |
 |---|---|---|
-| `backup-plugin.yml` | Push, PR, Montags 06:00 UTC | CI (phpcs, phpstan, psalm, phpmd) auf PHP 8.3 & 8.4 |
-| `deploy-test.yml` | Manuell oder nach CI auf `feature/**` | https://spielwiese.erfindergeist.org/ |
-| `deploy-prod.yml` | Nach CI auf `main` | https://erfindergeist.org/ |
-| `release.yml` | Manueller Dispatch mit Version | Version bumpen, Tag, ZIP, GitHub Release, FTP-Deploy |
-
-**Wichtig:** Änderungen an Quality-Tools oder deren Konfigurationsdateien müssen auch in `backup-plugin.yml` nachgezogen werden — die Pipeline führt dieselben Tools aus.
+| `backup-plugin.yml` | Push, PR, Mondays 06:00 UTC | CI (phpcs, phpstan, psalm, phpmd) on PHP 8.3 & 8.4 |
+| `deploy-test.yml` | Manual or after CI on `feature/**` | https://spielwiese.erfindergeist.org/ |
+| `deploy-prod.yml` | After CI on `main` | https://erfindergeist.org/ |
+| `release.yml` | Manual dispatch with version input | Bump version, tag, ZIP, GitHub Release, FTP deploy |
